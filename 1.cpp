@@ -15,7 +15,7 @@ double integr(double a, double b, int n, double (*g)(double))
 
   s = 0.;
   h = (b - a) / n;
-  #pragma omp parallel for reduction(+:s)
+  #pragma omp parallel for reduction(+:s) num_threads(8)
   for(i = 0; i < n; i ++){
     s += g(a + i * h);
   }
@@ -29,7 +29,7 @@ int main()
 
   A = 0.0;
   B = 1.0;
-  N = 10000000; 
+  N = 100000000; 
   v = integr(A, B, N, func);
   printf("%lf\n", v);
 }

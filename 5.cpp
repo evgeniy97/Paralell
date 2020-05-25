@@ -4,7 +4,7 @@
 #include <omp.h>
 #include <sys/time.h>
 
-#define N 2
+#define N 100
 
 float A[N][N];
 float B[N][N];
@@ -24,7 +24,8 @@ int main()
             B[i][j] = 2;
 	}
     gettimeofday(&tv1, &tz);
-    #pragma omp parallel for private(i,j,k) shared(A,B,C)
+    double s = 1.; 
+    #pragma omp parallel for reduction(+:s) num_threads(1)
     for (i = 0; i < N; ++i) {
         for (j = 0; j < N; ++j) {
             for (k = 0; k < N; ++k) {
@@ -33,7 +34,7 @@ int main()
         }
     }
 
-
+/*
     printf("Matrix C\n");
     for (int i = 0; i < N; i++){
         for (int j =0; j < N; j++){
@@ -41,7 +42,7 @@ int main()
         }
         printf("\n");
     }
-
+*/
     gettimeofday(&tv2, &tz);
     elapsed = (double) (tv2.tv_sec-tv1.tv_sec) + (double) (tv2.tv_usec-tv1.tv_usec) * 1.e-6;
     printf("elapsed time = %f seconds.\n", elapsed);

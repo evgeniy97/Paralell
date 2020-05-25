@@ -40,7 +40,7 @@ int main(){
 
     double r[NUM_THREADS];
 
-    #pragma omp parallel for reduction(+:s)
+    #pragma omp parallel for reduction(+:s) num_threads(1)
     for(int i = 0; i < NUM_THREADS; i ++){
         r[i] = find_min(A + i*H,A + (i+1)*H, B,K,f);
     }

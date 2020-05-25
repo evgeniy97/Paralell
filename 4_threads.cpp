@@ -51,7 +51,7 @@ int main(int arc, char* argv[])
   for(i = 0; i < numt; i ++) {
     nums[i] = i;
 
-    rc = pthread_create(threads + i, NULL, worker, nums + i); // Тут надо другое
+    rc = pthread_create(threads + i, NULL, worker, nums + i);
     if(rc != 0) {
       fprintf(stderr, "pthread_create: error code %d\n", rc);
       exit(-1);
