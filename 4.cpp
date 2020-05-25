@@ -32,7 +32,7 @@ int main(){
 
     A = 0.0;
     B = 4.0;
-    K = 100;
+    K = 100000000;
     double s = 0.; 
     
     int NUM_THREADS = 8;

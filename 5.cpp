@@ -4,7 +4,7 @@
 #include <omp.h>
 #include <sys/time.h>
 
-#define N 100
+#define N 1000
 
 float A[N][N];
 float B[N][N];
@@ -25,7 +25,7 @@ int main()
 	}
     gettimeofday(&tv1, &tz);
     double s = 1.; 
-    #pragma omp parallel for reduction(+:s) num_threads(1)
+    #pragma omp parallel for reduction(+:s) num_threads(4)
     for (i = 0; i < N; ++i) {
         for (j = 0; j < N; ++j) {
             for (k = 0; k < N; ++k) {
