@@ -5,30 +5,42 @@
 
 using namespace std;
 
-double a = 0.0, b = 1.0, h, *r;
+double a = 0.0, b = 1.0, H, h, *r;
 int *nums, numt, n;
 
-double f(double x)
+struct args {
+    double x_1;
+    double x_2;
+    double y_1;
+    double y_2;
+    int N;
+};
+
+double f(double x, double y)
 {
   return x*x + (y-2) * (y-2);
 }
 
-void* worker(void* p, void* q)
+void* worker(void *input)
 {
-    // REWRITE HERE
-  int x, y, i;
-  double min_f; 
 
-  x = *(double*)p;
-  y = *(double*)p;
-  min_f = f(x,y);
-  for(i = x; i < n; i += numt){
-      for(j = y; j < n; i += numt)
-      {
-          now_f = f(i, j);
-          if (now_f < min_f){
-              min_f = now_f;
-          }
+  double x_1 = ((struct args*)input)->x_1;
+  double x_2 = ((struct args*)input)->x_2;
+  double y_1 = ((struct args*)input)->y_1;
+  double y_2 = ((struct args*)input)->y_2;
+  int N = ((struct args*)input)->N;
+  
+  double min_f, new_f; 
+  std::srand(unsigned(std::time(0)));
+
+  min_f = f(x_1,y_1);
+  double x,y;
+  for(int i = 0; i < N; i += 1){
+    x = x_1 + std::rand()/(float)RAND_MAX * (x_2 - x_1); 
+    y = y_1 + std::rand()/(float)RAND_MAX * (y_2 - y_1);
+    now_f = f(x,y);
+    if (now_f < min_f){
+      min_f = now_f;
       }
   }
   r[my] = min_f; 
@@ -46,12 +58,18 @@ int main(int arc, char* argv[])
   threads = (pthread_t*)malloc(numt * sizeof(pthread_t));
   nums = (int*)malloc(numt * sizeof(int));
   r = (double*)malloc(numt * sizeof(double));
-  h = (b - a) / n;
-
+  
+  N = (b - a) / n;
+  H = (b-a) / nummt;
   for(i = 0; i < numt; i ++) {
-    nums[i] = i;
+    struct args *arguments = (struct args *)malloc(sizeof(struct args));
+    arguments->x_1 = i * H;
+    arguments->x_2 = (i+1)* H;
+    arguments->y_1 = a;
+    arguments->y_2 = b;
+    arguments->N = N;
 
-    rc = pthread_create(threads + i, NULL, worker, nums + i);
+    rc = pthread_create(threads + i, NULL, worker, arguments); // Тут надо другое
     if(rc != 0) {
       fprintf(stderr, "pthread_create: error code %d\n", rc);
       exit(-1);
@@ -65,8 +83,11 @@ int main(int arc, char* argv[])
     }
   }
 
-  S = 0;
-  for(i = 0; i < numt; i ++) 
-    S += r[i];
-  printf("Answer = %lf\n", S * h);
+  double min_f = r[0];
+  for(int i = 0; i < NUM_THREADS; i ++){
+    if (r[i] < min_f){
+      min_f = r[i];
+      }
+    }
+  printf("%lf\n", min_f);
 }
